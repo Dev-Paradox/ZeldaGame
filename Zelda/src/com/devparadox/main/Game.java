@@ -1,16 +1,24 @@
 package com.devparadox.main;
 
-import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Canvas;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 
-public class Game extends Canvas implements Runnable 
+import com.devparadox.entities.Entity;
+import com.devparadox.entities.Player;
+import com.devparadox.graphics.Spritesheet;
+
+public class Game extends Canvas implements Runnable, KeyListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -23,12 +31,35 @@ public class Game extends Canvas implements Runnable
 	private Thread thread;
 	private boolean isRunning;
 	
+	//Sprite sheet
+	public static Spritesheet spritesheet;
+	
 	//Background
 	public static JFrame frame;
 	private BufferedImage image;
 
+	//Entities
+	public List<Entity> entities;
+	private Player player;
+	
+	/*
+	 * Main
+	 */
+	public static void main(String[] args)
+	{
+		Game game = new Game();
+		game.Start();
+	}
+	
+	/*
+	 * Game constructor
+	 */
 	public Game()
 	{
+		//Add Key Listener event for player's actions
+		//'this' -> is the Responsible Listener Class (which in this case is the Game one)
+		addKeyListener(this);
+		
 		//Set the resolution
 		this.setPreferredSize(new Dimension(WIDTH*SCALE, HEIGHT*SCALE));
 		
@@ -37,8 +68,23 @@ public class Game extends Canvas implements Runnable
 		
 		//Initialize the image to be buffered into the game
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+		
+		//Initialize sprite sheet
+		spritesheet = new Spritesheet("/spritesheet.png");
+		
+		//Initialize entities
+		entities = new ArrayList<Entity>();
+		
+		//Create the player
+		player = new Player(0,0,16,16,spritesheet.GetSprite(32, 0, 16, 16));
+		
+		//Add into entities
+		entities.add(player);
 	}
 	
+	/*
+	 * Initialize basic configuration of the game's window
+	 */
 	public void InitFrame()
 	{
 		//Instance a new Frame
@@ -47,7 +93,7 @@ public class Game extends Canvas implements Runnable
 		//Add the Canvas into Frame
 		frame.add(this);
 		
-		//Packs the components within the window based on the component’s preferred sizes.
+		//Packs the components within the window based on the componentï¿½s preferred sizes.
 		frame.pack();
 		
 		//Set resize false => user cannot resize the window
@@ -63,6 +109,9 @@ public class Game extends Canvas implements Runnable
 		frame.setVisible(true);
 	}
 	
+	/*
+	 * Start the game loop
+	 */
 	public synchronized void Start()
 	{
 		thread = new Thread(this);
@@ -70,6 +119,9 @@ public class Game extends Canvas implements Runnable
 		thread.start();
 	}
 	
+	/*
+	 * Stop the game loop
+	 */
 	public synchronized void Stop()
 	{
 		try 
@@ -82,17 +134,22 @@ public class Game extends Canvas implements Runnable
 		}
 	}
 	
-	public static void main(String[] args)
-	{
-		Game game = new Game();
-		game.Start();
-	}
 	
+	/*
+	 * Tick the actions
+	 */
 	public void Tick()
 	{
-
+		for(int i = 0; i < entities.size(); i++)
+		{
+			Entity e = entities.get(i);
+			e.Tick();
+		}
 	}
 	
+	/*
+	 * Render the graphic
+	 */
 	public void Render()
 	{
 		//Sequence of buffers into screen to optimize the rendering 
@@ -107,8 +164,15 @@ public class Game extends Canvas implements Runnable
 		Graphics graph = image.getGraphics();
 		
 		//Base layer
-		graph.setColor(Color.BLACK);
+		graph.setColor(Color.GREEN);
 		graph.fillRect(0, 0, WIDTH*SCALE, HEIGHT*SCALE);
+		
+		//Render Entities
+		for(int i = 0; i < entities.size(); i++)
+		{
+			Entity e = entities.get(i);
+			e.Render(graph);
+		}
 		
 		graph.dispose();
 		graph = bs.getDrawGraphics();
@@ -164,6 +228,82 @@ public class Game extends Canvas implements Runnable
 		}
 		
 		Stop();
+	}
+
+	/*
+	 * Mechanics
+	 */
+	@Override
+	public void keyTyped(KeyEvent e) 
+	{
+		
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) 
+	{
+		//Vertical actions
+		if(e.getKeyCode() == KeyEvent.VK_UP ||
+				e.getKeyCode() == KeyEvent.VK_W)
+		{
+			//Execute up action
+			player.up = true;
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_DOWN || 
+					e.getKeyCode() == KeyEvent.VK_S)
+		{
+			//Execute down action
+			player.down = true;
+		}
+				
+		//Horizontal actions
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT ||
+				e.getKeyCode() == KeyEvent.VK_D)
+		{
+			//Execute right action
+			player.right = true;
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_LEFT || 
+					e.getKeyCode() == KeyEvent.VK_A)
+		{
+			//Execute left action
+			player.left = true;
+		}
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) 
+	{
+		//Vertical actions
+		if(e.getKeyCode() == KeyEvent.VK_UP ||
+				e.getKeyCode() == KeyEvent.VK_W)
+		{
+			//Execute up action
+			player.up = false;
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_DOWN || 
+					e.getKeyCode() == KeyEvent.VK_S)
+		{
+			//Execute down action
+			player.down = false;
+		}
+				
+		//Horizontal actions
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT ||
+				e.getKeyCode() == KeyEvent.VK_D)
+		{
+			//Execute right action
+			player.right = false;
+		}
+		else if(e.getKeyCode() == KeyEvent.VK_LEFT || 
+					e.getKeyCode() == KeyEvent.VK_A)
+		{
+			//Execute left action
+			player.left = false;
+		}
+				
 	}
 
 }
