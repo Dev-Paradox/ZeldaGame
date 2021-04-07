@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import com.devparadox.main.Game;
+import com.devparadox.world.Camera;
+import com.devparadox.world.World;
 
 public class Player extends Entity
 {
@@ -70,23 +72,24 @@ public class Player extends Entity
 	{
 		moved = false;
 		
-		if(up)
+		if(up && World.isFree(this.GetX(), (int)(this.GetY() - speed)))
 		{
+			
 			moved = true;
 			y -= speed;
 		}
-		else if(down)
+		else if(down && World.isFree(this.GetX(), (int)(this.GetY() + speed)))
 		{
 			moved = true;
 			y += speed;
 		}
 		
-		if(right)
+		if(right && World.isFree((int)(this.GetX() + speed), this.GetY()))
 		{
 			moved = true;
 			x += speed;
 		}
-		else if(left)
+		else if(left && World.isFree((int)(this.GetX() - speed), this.GetY()))
 		{
 			moved = true;
 			x -= speed;
@@ -106,34 +109,37 @@ public class Player extends Entity
 				}
 			}
 		}
+		
+		Camera.x = Camera.Clamp(this.GetX() - (Game.WIDTH/2), 0, (World.WIDTH * 16) - Game.WIDTH);
+		Camera.y = Camera.Clamp(this.GetY() - (Game.HEIGHT/2), 0, (World.HEIGHT * 16) - Game.HEIGHT);
 	}
 	
 	public void Render(Graphics g)
 	{
 		if(up)
 		{
-			g.drawImage(upPlayer[index], this.GetX(), this.GetY(), null);
+			g.drawImage(upPlayer[index], this.GetX() - Camera.x, this.GetY() - Camera.y, null);
 			lastPlayerMove = upPlayer[index];
 		}
 		else if(down)
 		{
-			g.drawImage(downPlayer[index], this.GetX(), this.GetY(), null);
+			g.drawImage(downPlayer[index], this.GetX() - Camera.x, this.GetY() - Camera.y, null);
 			lastPlayerMove = downPlayer[index];
 		}
 		
 		if(right)
 		{
-			g.drawImage(rightPlayer[index], this.GetX(), this.GetY(), null);
+			g.drawImage(rightPlayer[index], this.GetX() - Camera.x, this.GetY() - Camera.y, null);
 			lastPlayerMove = rightPlayer[index];
 		}
 		else if(left)
 		{
-			g.drawImage(leftPlayer[index], this.GetX(), this.GetY(), null);
+			g.drawImage(leftPlayer[index], this.GetX() - Camera.x, this.GetY() - Camera.y, null);
 			lastPlayerMove = leftPlayer[index];
 		}
 		else
 		{
-			g.drawImage(lastPlayerMove, this.GetX(), this.GetY(), null);
+			g.drawImage(lastPlayerMove, this.GetX() - Camera.x, this.GetY() - Camera.y , null);
 		}
 	}
 

@@ -24,8 +24,8 @@ public class Game extends Canvas implements Runnable, KeyListener
 	private static final long serialVersionUID = 1L;
 	
 	//Constants
-	private final int WIDTH = 240;
-	private final int HEIGHT = 160;
+	public final static int WIDTH = 240;
+	public final static int HEIGHT = 160;
 	private final static int SCALE = 3;
 	
 	//Thread - Game Loop

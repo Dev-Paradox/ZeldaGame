@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import com.devparadox.main.Game;
+import com.devparadox.world.Camera;
 
 public class Entity 
 {
@@ -34,7 +35,7 @@ public class Entity
 	//Render sprite
 	public void Render(Graphics g)
 	{
-		g.drawImage(sprite, this.GetX(), this.GetY(), null);
+		g.drawImage(sprite, this.GetX() - Camera.x, this.GetY() - Camera.y, null);
 	}
 	
 	//Entity action

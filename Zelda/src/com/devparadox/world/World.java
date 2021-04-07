@@ -14,10 +14,11 @@ import com.devparadox.main.Game;
 
 public class World 
 {
-	private Tile[] tiles;
+	private static Tile[] tiles;
 	
 	public static int WIDTH;
 	public static int HEIGHT;
+	public static final int TILE_SIZE = 16;
 	
 	public World(String path)
 	{
@@ -88,14 +89,56 @@ public class World
 		}
 	}
 	
+	public static boolean isFree(int xNext, int yNext)
+	{
+		int x1 = xNext / TILE_SIZE;
+		int y1 = yNext / TILE_SIZE;
+		
+		int x2 = (xNext + TILE_SIZE - 1) / TILE_SIZE;
+		int y2 = yNext / TILE_SIZE;
+		
+		int x3 = xNext / TILE_SIZE;
+		int y3 = (yNext + TILE_SIZE - 1) / TILE_SIZE;
+		
+		int x4 = (xNext + TILE_SIZE - 1) / TILE_SIZE;
+		int y4 = (yNext + TILE_SIZE - 1) / TILE_SIZE;
+		
+		if((tiles[x1 + (y1 * World.WIDTH)] instanceof WallTile) ||
+		   (tiles[x2 + (y2 * World.WIDTH)] instanceof WallTile) ||
+		   (tiles[x3 + (y3 * World.WIDTH)] instanceof WallTile) ||
+		   (tiles[x4 + (y4 * World.WIDTH)] instanceof WallTile))
+		{
+			return false;
+		}
+		
+		return true;
+	}
+	
 	public void Render(Graphics g)
 	{
+		//Optimizing the map renderization
+		
+		//int xStart = Camera.x / 16;
+		//int yStart = Camera.y / 16;
+		
+		//The same operation of above, but more perfomatic
+		int xStart = Camera.x >> 4;
+		int yStart = Camera.y >> 4;
+		
+		int xFinal = xStart + (Game.WIDTH >> 4);
+		int yFinal = yStart + (Game.HEIGHT >> 4);
+		
 		//Update the tiles
 		//Tiles -> all the static components which belongs to the environment (world)
-		for(int xx=0; xx < WIDTH; xx++)
+		for(int xx = xStart; xx <= xFinal; xx++)
 		{
-			for(int yy=0; yy < HEIGHT; yy++)
+			for(int yy = yStart; yy <= yFinal; yy++)
 			{
+				if(xx < 0 || yy < 0 || xx >= WIDTH || yy >= HEIGHT)
+				{
+					continue;
+				}
+				
 				Tile tile = tiles[xx + (yy*WIDTH)];
 				tile.Render(g);
 			}	
