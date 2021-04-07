@@ -18,9 +18,9 @@ public class Player extends Entity
 	
 	//Player's frames
 	private int frames = 0;
-	private int maxFrames = 20;
+	private int maxFrames = 12;
 	private int index = 0;
-	private int maxIndex = 1;
+	private int maxIndex = 2;
 	private boolean moved;
 	
 	//Sprite
@@ -41,11 +41,13 @@ public class Player extends Entity
 		{
 			downPlayer[i] = Game.spritesheet.GetSprite(32 + (i*16), 0, 16, 16);
 		}		
-		upPlayer = new BufferedImage[2];
+		upPlayer = new BufferedImage[3];
 		for(int i=0; i<2; i++)
 		{
 			upPlayer[i] = Game.spritesheet.GetSprite(80 + (i*16), 0, 16, 16);
-		}	
+		}
+		upPlayer[2] = Game.spritesheet.GetSprite(80, 0, 16, 16);
+		
 		rightPlayer = new BufferedImage[3];
 		for(int i=0; i<3; i++)
 		{
@@ -57,8 +59,13 @@ public class Player extends Entity
 			leftPlayer[i] = Game.spritesheet.GetSprite((i*16), 16, 16, 16);
 		}
 		
+		lastPlayerMove = downPlayer[0];
+		
 	}
 	
+	/*
+	 * Tick the actions
+	 */
 	public void Tick()
 	{
 		moved = false;

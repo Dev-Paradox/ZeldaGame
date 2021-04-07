@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import com.devparadox.entities.Entity;
 import com.devparadox.entities.Player;
 import com.devparadox.graphics.Spritesheet;
+import com.devparadox.world.World;
 
 public class Game extends Canvas implements Runnable, KeyListener
 {
@@ -37,10 +38,14 @@ public class Game extends Canvas implements Runnable, KeyListener
 	//Background
 	public static JFrame frame;
 	private BufferedImage image;
-
+	
+	//World
+	public static World world;
+	
 	//Entities
-	public List<Entity> entities;
-	private Player player;
+	public static List<Entity> entities;
+	
+	public static Player player;
 	
 	/*
 	 * Main
@@ -72,11 +77,14 @@ public class Game extends Canvas implements Runnable, KeyListener
 		//Initialize sprite sheet
 		spritesheet = new Spritesheet("/spritesheet.png");
 		
-		//Initialize entities
-		entities = new ArrayList<Entity>();
-		
 		//Create the player
 		player = new Player(0,0,16,16,spritesheet.GetSprite(32, 0, 16, 16));
+		
+		//Initialize entities
+		entities = new ArrayList<Entity>();
+		 
+		//Initialize the world
+		world = new World("/map.png");		
 		
 		//Add into entities
 		entities.add(player);
@@ -164,8 +172,11 @@ public class Game extends Canvas implements Runnable, KeyListener
 		Graphics graph = image.getGraphics();
 		
 		//Base layer
-		graph.setColor(Color.GREEN);
+		graph.setColor(Color.BLACK);
 		graph.fillRect(0, 0, WIDTH*SCALE, HEIGHT*SCALE);
+		
+		//Render World
+		world.Render(graph);
 		
 		//Render Entities
 		for(int i = 0; i < entities.size(); i++)

@@ -3,6 +3,8 @@ package com.devparadox.entities;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import com.devparadox.main.Game;
+
 public class Entity 
 {
 	protected double x;
@@ -12,6 +14,14 @@ public class Entity
 	
 	private BufferedImage sprite;
 	
+	public static BufferedImage LIFEPACK_EN = Game.spritesheet.GetSprite(48, 16, 16, 16);
+	
+	public static BufferedImage SKILL_EN = Game.spritesheet.GetSprite(64, 16, 16, 16);
+	
+	public static BufferedImage POTION_EN = Game.spritesheet.GetSprite(96, 16, 16, 16);
+	
+	public static BufferedImage ENEMY_EN = Game.spritesheet.GetSprite(112, 16, 16, 16);
+			
 	public Entity(double x, double y, int width, int height, BufferedImage sprite)
 	{
 		this.x = x;
