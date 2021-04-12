@@ -67,8 +67,10 @@ public class World
  					}
 					else if(actualPixel == 0xFFF70000)
 					{
+						Enemy enemy = new Enemy(xx*16,yy*16,16,16,Entity.ENEMY_EN);
 						//Enemy (Red)
-						Game.entities.add(new Enemy(xx*16,yy*16,16,16,Entity.ENEMY_EN));
+						Game.entities.add(enemy);
+						Game.enemies.add(enemy);
 					}
 					else if(actualPixel == 0xFFFFFF00)
 					{

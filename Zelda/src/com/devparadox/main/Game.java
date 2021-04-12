@@ -11,9 +11,11 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.JFrame;
 
+import com.devparadox.entities.Enemy;
 import com.devparadox.entities.Entity;
 import com.devparadox.entities.Player;
 import com.devparadox.graphics.Spritesheet;
@@ -45,7 +47,14 @@ public class Game extends Canvas implements Runnable, KeyListener
 	//Entities
 	public static List<Entity> entities;
 	
+	//Player
 	public static Player player;
+	
+	//Enemy
+	public static List<Enemy> enemies;
+	
+	//Random 
+	public static Random random;
 	
 	/*
 	 * Main
@@ -61,6 +70,8 @@ public class Game extends Canvas implements Runnable, KeyListener
 	 */
 	public Game()
 	{
+		random = new Random();
+		
 		//Add Key Listener event for player's actions
 		//'this' -> is the Responsible Listener Class (which in this case is the Game one)
 		addKeyListener(this);
@@ -80,8 +91,12 @@ public class Game extends Canvas implements Runnable, KeyListener
 		//Create the player
 		player = new Player(0,0,16,16,spritesheet.GetSprite(32, 0, 16, 16));
 		
-		//Initialize entities
+
+		//Initialize enemies (used for check the enemies collision between themselves)
 		entities = new ArrayList<Entity>();
+		
+		//Initialize entities
+		enemies = new ArrayList<Enemy>();
 		 
 		//Initialize the world
 		world = new World("/map.png");		
@@ -196,6 +211,9 @@ public class Game extends Canvas implements Runnable, KeyListener
 	 */
 	public void run() 
 	{
+		//Set the focus to the game window 
+		requestFocus();
+		
 		long lastTime = System.nanoTime();
 		
 		//Set to be 60 frames
